@@ -59,3 +59,44 @@ function capitalize(name) {
       $("#chat-input").val("");
     }
   });
+
+  // Chatbox input listener
+
+$("#chat-input").keypress(function(e) {
+    if (e.which === 13 && $("#chat-input").val() !== "") {
+      var message = $("#chat-input").val();
+  
+      chatData.push({
+        name: username,
+        message: message,
+        time: firebase.database.ServerValue.TIMESTAMP,
+        idNum: playerNum
+      });
+  
+      $("#chat-input").val("");
+    }
+  });
+  
+  // Click event for dynamically added <li> elements
+  $(document).on("click", "li", function() {
+    console.log("click");
+  
+    // Grabs text from li choice
+    var clickChoice = $(this).text();
+    console.log(playerRef);
+  
+    // Sets the choice in the current player object in firebase
+    playerRef.child("choice").set(clickChoice);
+  
+    // User has chosen, so removes choices and displays what they chose
+    $("#player" + playerNum + " ul").empty();
+    $("#player" + playerNum + "chosen").text(clickChoice);
+  
+    // Increments turn. Turn goes from:
+    // 1 - player 1
+    // 2 - player 2
+    // 3 - determine winner
+    currentTurnRef.transaction(function(turn) {
+      return turn + 1;
+    });
+  });
