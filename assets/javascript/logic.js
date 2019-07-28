@@ -37,3 +37,25 @@ $("#start").click(function() {
       getInGame();
     }
   });
+
+  // Function to capitalize usernames
+function capitalize(name) {
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
+  
+  // CHAT LISTENERS
+  // Chat send button listener, grabs input and pushes to firebase. (Firebase's push automatically creates a unique key)
+  $("#chat-send").click(function() {
+    if ($("#chat-input").val() !== "") {
+      var message = $("#chat-input").val();
+  
+      chatData.push({
+        name: username,
+        message: message,
+        time: firebase.database.ServerValue.TIMESTAMP,
+        idNum: playerNum
+      });
+  
+      $("#chat-input").val("");
+    }
+  });
