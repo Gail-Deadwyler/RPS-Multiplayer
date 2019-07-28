@@ -61,7 +61,6 @@ function capitalize(name) {
   });
 
   // Chatbox input listener
-
 $("#chat-input").keypress(function(e) {
     if (e.which === 13 && $("#chat-input").val() !== "") {
       var message = $("#chat-input").val();
@@ -100,3 +99,52 @@ $("#chat-input").keypress(function(e) {
       return turn + 1;
     });
   });
+
+  // Update chat on screen when new message detected - ordered by 'time' value
+chatData.orderByChild("time").on("child_added", function(snapshot) {
+    $("#chat-messages").append(
+      $("<p>").addClass("player-" + snapshot.val().idNum),
+      $("<span>").text(snapshot.val().name + ":" + snapshot.val().message)
+    );
+  
+    // Keeps div scrolled to bottom on each update.
+    $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+  });
+  
+  // Tracks changes in key which contains player objects
+  playersRef.on("value", function(snapshot) {
+    // length of the 'players' array
+    currentPlayers = snapshot.numChildren();
+  
+    // Check to see if players exist
+    playerOneExists = snapshot.child("1").exists();
+    playerTwoExists = snapshot.child("2").exists();
+  
+    // Player data objects
+    playerOneData = snapshot.child("1").val();
+    playerTwoData = snapshot.child("2").val();
+  
+    // If theres a player 1, fill in name and win loss data
+    if (playerOneExists) {
+      $("#player1-name").text(playerOneData.name);
+      $("#player1-wins").text("Wins: " + playerOneData.wins);
+      $("#player1-losses").text("Losses: " + playerOneData.losses);
+    } else {
+      // If there is no player 1, clear win/loss data and show waiting
+      $("#player1-name").text("Waiting for Player 1");
+      $("#player1-wins").empty();
+      $("#player1-losses").empty();
+    }
+
+      // If theres a player 2, fill in name and win/loss data
+  if (playerTwoExists) {
+    $("#player2-name").text(playerTwoData.name);
+    $("#player2-wins").text("Wins: " + playerTwoData.wins);
+    $("#player2-losses").text("Losses: " + playerTwoData.losses);
+  } else {
+    // If no player 2, clear win/loss and show waiting
+    $("#player2-name").text("Waiting for Player 2");
+    $("#player2-wins").empty();
+    $("#player2-losses").empty();
+  }
+});
