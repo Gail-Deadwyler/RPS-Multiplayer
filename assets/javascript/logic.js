@@ -20,3 +20,20 @@ var config = {
   var playerTwoExists = false;
   var playerOneData = null;
   var playerTwoData = null;
+
+  // USERNAME LISTENERS
+// Start button - takes username and tries to get user in game
+$("#start").click(function() {
+    if ($("#username").val() !== "") {
+      username = capitalize($("#username").val());
+      getInGame();
+    }
+  });
+  
+  // listener for 'enter' in username input
+  $("#username").keypress(function(e) {
+    if (e.which === 13 && $("#username").val() !== "") {
+      username = capitalize($("#username").val());
+      getInGame();
+    }
+  });
